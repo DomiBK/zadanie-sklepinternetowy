@@ -4,13 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace zadanie_08_public interface IProdukt
+namespace zadanie_08
 {
-    void WyswietlInfo();
-    decimal AktualnaCena();
-    int DostepnaIlosc();
-}
+    public interface IProdukt
+    {
 
+        void WyswietlInfo();
+        decimal AktualnaCena();
+        int DostepnaIlosc();
+
+    }
 public class Produkt : IProdukt
 {
     public decimal Cena { get; set; }
@@ -58,7 +61,7 @@ public class Elektronika : Produkt
 {
     public string Nazwa { get; set; }
     public string Rodzaj { get; set; }
-   
+
 
     public Elektronika(string nazwa, string rodzaj, decimal cena, int ilosc, string opis)
         : base(cena, ilosc, opis)
@@ -72,20 +75,20 @@ public class Odziez : Produkt
 {
     public string Nazwa { get; set; }
     public string Rozmiar { get; set; }
-    
+
     public Odziez(string nazwa, string rozmiar, decimal cena, int ilosc, string opis)
-        :base(cena, ilosc, opis)
+        : base(cena, ilosc, opis)
     {
         Nazwa = nazwa;
         Rozmiar = rozmiar;
     }
 }
 
-    public abstract class Osoba
+public abstract class Osoba
 {
     public string Imie { get; set; }
     public string Nazwisko { get; set; }
-    
+
 }
 
 public class Klient : Osoba
@@ -101,11 +104,11 @@ public class Klient : Osoba
     {
         if (produkt.DostepnaIlosc() >= ilosc)
         {
-            for (int i = 0; i < ilosc; i++) 
-            { 
+            for (int i = 0; i < ilosc; i++)
+            {
                 Koszyk.Add(produkt);
             }
-             Koszyk.Remove(produkt);
+            Koszyk.Remove(produkt);
         }
         else
         {
@@ -123,7 +126,7 @@ public class Klient : Osoba
         return Koszyk.Sum(produkt => produkt.AktualnaCena());
     }
 }
-
+}
 //bstrakcyjne są bardziej odpowiednie, gdy klasy dzielą wiele wspólnych cech i zachowań, natomiast interfejsy są lepsze do definiowania kontraktów,
 //które mogą być realizowane przez klasy, które mogą nie mieć ze sobą nic wspólnego poza implementacją tych kontraktów
 
@@ -134,4 +137,3 @@ public class Klient : Osoba
 //public xyz(int Ilosc) base:(opis){
 // ilosc=Ilosc}
 // }
-}
