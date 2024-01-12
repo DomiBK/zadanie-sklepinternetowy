@@ -4,107 +4,134 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace zadanie_08_01
+namespace zadanie_08_public interface IProdukt
 {
-    internal interface IProdukt
-    {
-        void Wyswietlinfo();
-        void AktualnaCena();
-        void Dostepnailosc();
+    void WyswietlInfo();
+    decimal AktualnaCena();
+    int DostepnaIlosc();
+}
 
+public class Produkt : IProdukt
+{
+    public decimal Cena { get; set; }
+    public int Ilosc { get; set; }
+    public string Opis { get; set; }
+
+    public Produkt(decimal cena, int ilosc, string opis)
+    {
+        Cena = cena;
+        Ilosc = ilosc;
+        Opis = opis;
     }
 
-    public class Ksiazka : IProdukt
+    public void WyswietlInfo()
     {
-        public string Autor { get; set; }
-        public string Nazwa { get; set; }
-        public decimal Cena { get; set; }
-        public int Ilosc { get; set; }
+        Console.WriteLine($"Opis: {Opis}, Cena: {Cena}, Ilość: {Ilosc}");
+    }
+
+    public decimal AktualnaCena()
+    {
+        return Cena;
+    }
+
+    public int DostepnaIlosc()
+    {
+        return Ilosc;
+    }
+}
 
 
-        public Ksiazka(string autor, string nazwa, decimal cena, int ilosc)
+public class Ksiazka : Produkt
+{
+    public string Autor { get; set; }
+    public string ISBN { get; set; }
+
+    public Ksiazka(decimal cena, int ilosc, string opis, string autor, string isbn)
+        : base(cena, ilosc, opis)
+    {
+        Autor = autor;
+        ISBN = isbn;
+    }
+}
+
+public class Elektronika : Produkt
+{
+    public string Nazwa { get; set; }
+    public string Rodzaj { get; set; }
+   
+
+    public Elektronika(string nazwa, string rodzaj, decimal cena, int ilosc, string opis)
+        : base(cena, ilosc, opis)
+    {
+        Nazwa = nazwa;
+        Rodzaj = rodzaj;
+    }
+}
+
+public class Odziez : Produkt
+{
+    public string Nazwa { get; set; }
+    public string Rozmiar { get; set; }
+    
+    public Odziez(string nazwa, string rozmiar, decimal cena, int ilosc, string opis)
+        :base(cena, ilosc, opis)
+    {
+        Nazwa = nazwa;
+        Rozmiar = rozmiar;
+    }
+}
+
+    public abstract class Osoba
+{
+    public string Imie { get; set; }
+    public string Nazwisko { get; set; }
+    
+}
+
+public class Klient : Osoba
+{
+    public List<IProdukt> Koszyk { get; set; }
+
+    public Klient()
+    {
+        Koszyk = new List<IProdukt>();
+    }
+
+    public void DodajDoKoszyka(IProdukt produkt, int ilosc)
+    {
+        if (produkt.DostepnaIlosc() >= ilosc)
         {
-            Autor = autor;
-            Nazwa = nazwa;
-            Cena = cena;
-            Ilosc = ilosc;
+            for (int i = 0; i < ilosc; i++) 
+            { 
+                Koszyk.Add(produkt);
+            }
+             Koszyk.Remove(produkt);
         }
-
-        public void Wyswietlinfo()
+        else
         {
-            Console.WriteLine($"AUTOR: {Autor}, NAZWA: {Nazwa}");
-        }
-
-        public void AktualnaCena()
-        {
-            Console.WriteLine($"AKTUALNA CENA: {Cena}");
-        }
-
-        public void Dostepnailosc()
-        {
-            Console.WriteLine($"DOSTEPNA ILOŚĆ: {Ilosc}");
+            Console.WriteLine("Nie ma wystarczającej ilości produktu.");
         }
     }
 
-    public class Elektronika : IProdukt
+    public void WyswietlCeneProduktu(IProdukt produkt)
     {
-        public string Nazwa { get; set; }
-        public string Rodzaj { get; set; }
-        public decimal Cena { get; set; }
-        public int Ilosc { get; set; }
-
-        public Elektronika(string nazwa, string rodzaj, decimal cena, int ilosc)
-        {
-            Nazwa = nazwa;
-            Rodzaj = rodzaj;
-            Cena = cena;
-            Ilosc = ilosc;
-        }
-
-        public void Wyswietlinfo()
-        {
-            Console.WriteLine($"NAZWA: {Nazwa} RODZAJ: {Rodzaj}");
-        }
-
-        public void AktualnaCena()
-        {
-            Console.WriteLine($"AKTUALNA CENA: {Cena}");
-        }
-
-        public void Dostepnailosc()
-        {
-            Console.WriteLine($"DOSTEPNA ILOSC: {Ilosc}");
-        }
+        Console.WriteLine($"Cena produktu: {produkt.AktualnaCena()}");
     }
 
-    public class Odziez : IProdukt
+    public decimal ObliczKosztCalegoKoszyka()
     {
-        public string Nazwa { get; set; }
-        public string Rozmiar { get; set; }
-        public decimal Cena { get; set; }
-        public int Ilosc { get; set; }
-
-        public Odziez(string nazwa, string rozmiar, decimal cena, int ilosc)
-        {
-            Nazwa = nazwa;
-            Rozmiar = rozmiar;
-            Cena = cena;
-            Ilosc = ilosc;
-        }
-
-        public void Wyswietlinfo()
-        {
-            Console.WriteLine($"NAZWA: {Nazwa}, ROZMIAR: {Rozmiar}");
-        }
-
-        public void AktualnaCena()
-        {
-            Console.WriteLine($"AKTUALNA CENA: ");
-        }
-
-        public void Dostepnailosc()
-        {
-            Console.WriteLine($"DOSTEPNA ILOŚĆ: {Ilosc}");
-        }
+        return Koszyk.Sum(produkt => produkt.AktualnaCena());
     }
+}
+
+//bstrakcyjne są bardziej odpowiednie, gdy klasy dzielą wiele wspólnych cech i zachowań, natomiast interfejsy są lepsze do definiowania kontraktów,
+//które mogą być realizowane przez klasy, które mogą nie mieć ze sobą nic wspólnego poza implementacją tych kontraktów
+
+// przyklad 
+// public class xyz : abc {
+// int ilosc {get ; set;}
+// 
+//public xyz(int Ilosc) base:(opis){
+// ilosc=Ilosc}
+// }
 }
